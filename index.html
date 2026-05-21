@@ -1023,6 +1023,35 @@ function toggleTheme() {
 // Apply saved theme immediately
 applyTheme(localStorage.getItem('pragma_theme') || 'dark');
 
+
+// ════ EXPOSE TO HTML ONCLICKS ════
+window.showScreen = showScreen;
+window.gotoAdmin = gotoAdmin;
+window.gotoChat = gotoChat;
+window.doLogin = doLogin;
+window.doAdminLogin = doAdminLogin;
+window.doLogout = doLogout;
+window.newChat = newChat;
+window.loadChat = loadChat;
+window.deleteChat = deleteChat;
+window.togglePanel = togglePanel;
+window.adminSaveKey = adminSaveKey;
+window.clearKey = clearKey;
+window.updatePassword = updatePassword;
+window.useStarter = useStarter;
+window.sendMessage = sendMessage;
+window.handleKey = handleKey;
+window.autoResize = autoResize;
+window.handleFiles = handleFiles;
+window.removeStaged = removeStaged;
+window.switchProvider = switchProvider;
+window.toggleTheme = toggleTheme;
+window.exportChats = exportChats;
+window.confirmAction = confirmAction;
+window.closeConfirm = closeConfirm;
+window.doClearChats = doClearChats;
+window.doFactoryReset = doFactoryReset;
+
 }); // end DOMContentLoaded
 </script>
 </head>
