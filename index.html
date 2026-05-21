@@ -451,36 +451,36 @@ html[data-theme="light"] .aeon-bg-logo {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
 // ════ STATE ════
-let claudeKey = null;
-let geminiKey = null;
-let activeProvider = localStorage.getItem('pragma_provider') || 'claude';
-let chats = JSON.parse(localStorage.getItem('pragma_chats') || '[]');
-let activeChatId = null;
-let stagedFiles = [];
-let isLoading = false;
+var claudeKey = null;
+var geminiKey = null;
+var activeProvider = localStorage.getItem('pragma_provider') || 'claude';
+var chats = JSON.parse(localStorage.getItem('pragma_chats') || '[]');
+var activeChatId = null;
+var stagedFiles = [];
+var isLoading = false;
 
 // ════ AUTH ════
 async function hashPw(pw) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
 }
 
 async function doLogin() {
-  const pw = document.getElementById('login-password').value;
+  var pw = document.getElementById('login-password').value;
   if (!pw) return;
-  const btn = document.querySelector('#screen-login .login-btn');
-  btn.textContent = 'Signing in…'; btn.disabled = true;
+  var btn = document.querySelector('#screen-login .login-btn');
+  btn.textContent = 'Signing in...'; btn.disabled = true;
   try {
-    const h = await hashPw(pw);
-    const stored = localStorage.getItem('pragma_chat_hash');
-    const defaultH = await hashPw('pragma2024');
-    const ok = stored ? h === stored : h === defaultH;
+    var inputHash = await hashPw(pw);
+    var stored = localStorage.getItem('pragma_chat_hash');
+    var defaultHash = await hashPw('pragma2024');
+    var ok = stored ? inputHash === stored : inputHash === defaultHash;
     if (ok) {
       document.getElementById('login-error').classList.remove('visible');
       logActivity('login', 'User signed in');
       recordLogin();
-      // Load keys from localStorage into memory
       claudeKey = localStorage.getItem('pragma_claude_key') || null;
       geminiKey = localStorage.getItem('pragma_gemini_key') || null;
       if (claudeKey) setProviderStatus('claude', 'connected', 'Key configured');
@@ -498,15 +498,15 @@ async function doLogin() {
 }
 
 async function doAdminLogin() {
-  const pw = document.getElementById('admin-login-password').value;
+  var pw = document.getElementById('admin-login-password').value;
   if (!pw) return;
-  const btn = document.querySelector('#screen-admin-login .login-btn');
-  btn.textContent = 'Verifying…'; btn.disabled = true;
+  var btn = document.querySelector('#screen-admin-login .login-btn');
+  btn.textContent = 'Verifying...'; btn.disabled = true;
   try {
-    const h = await hashPw(pw);
-    const stored = localStorage.getItem('pragma_admin_hash');
-    const defaultH = await hashPw('@cn82564947');
-    const ok = stored ? h === stored : h === defaultH;
+    var inputHash = await hashPw(pw);
+    var stored = localStorage.getItem('pragma_admin_hash');
+    var defaultHash = await hashPw('@cn82564947');
+    var ok = stored ? inputHash === stored : inputHash === defaultHash;
     if (ok) {
       document.getElementById('admin-login-error').classList.remove('visible');
       logActivity('login', 'Admin signed in to dashboard');
@@ -531,15 +531,15 @@ function doLogout() {
 }
 
 function recordLogin() {
-  const l = JSON.parse(localStorage.getItem('pragma_logins') || '[]');
-  l.unshift({ ts: Date.now() });
+  var l = JSON.parse(localStorage.getItem('pragma_logins') || '[]');
+  l.unshift({ts: Date.now()});
   if (l.length > 20) l.pop();
   localStorage.setItem('pragma_logins', JSON.stringify(l));
 }
 
 // ════ SCREEN ════
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
 }
 function gotoAdmin() { showScreen('screen-admin'); refreshAdmin(); }
@@ -547,48 +547,42 @@ function gotoChat() {
   showScreen('screen-chat');
   if (!document.getElementById('messages-inner').children.length && chats.length > 0) loadChat(chats[0].id);
 }
-document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-document.getElementById('admin-login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doAdminLogin(); });
+
+document.getElementById('login-password').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
+document.getElementById('admin-login-password').addEventListener('keydown', function(e){ if (e.key === 'Enter') doAdminLogin(); });
 
 // ════ ADMIN ════
 function refreshAdmin() {
-  const ch = JSON.parse(localStorage.getItem('pragma_chats') || '[]');
-  const ck = localStorage.getItem('pragma_claude_key') || '';
-  const gk = localStorage.getItem('pragma_gemini_key') || '';
-  const logins = JSON.parse(localStorage.getItem('pragma_logins') || '[]');
-
+  var ch = JSON.parse(localStorage.getItem('pragma_chats') || '[]');
+  var ck = localStorage.getItem('pragma_claude_key') || '';
+  var gk = localStorage.getItem('pragma_gemini_key') || '';
+  var logins = JSON.parse(localStorage.getItem('pragma_logins') || '[]');
   document.getElementById('stat-chats').textContent = ch.length;
   document.getElementById('stat-keys').textContent = ((ck ? 1 : 0) + (gk ? 1 : 0)) + ' / 2';
-
-  const prev = logins[1] || logins[0];
+  var prev = logins[1] || logins[0];
   document.getElementById('stat-last-login').textContent = prev ? formatRelative(prev.ts) : 'First login';
   document.getElementById('stat-login-count').textContent = logins.length + ' session' + (logins.length !== 1 ? 's' : '') + ' recorded';
-
   updateAdminKeyRow('claude', ck);
   updateAdminKeyRow('gemini', gk);
-
-  let total = 0;
-  for (const k of Object.keys(localStorage)) { if (k.startsWith('pragma_')) total += (localStorage.getItem(k) || '').length; }
-  document.getElementById('storage-usage').textContent =
-    (total / 1024).toFixed(1) + ' KB · ' + ch.length + ' conversations · ' +
-    ch.reduce((a, c) => a + (c.messages?.length || 0), 0) + ' messages';
-
+  var total = 0;
+  Object.keys(localStorage).forEach(function(k){ if (k.startsWith('pragma_')) total += (localStorage.getItem(k) || '').length; });
+  document.getElementById('storage-usage').textContent = (total/1024).toFixed(1) + ' KB · ' + ch.length + ' conversations · ' + ch.reduce(function(a,c){ return a + (c.messages ? c.messages.length : 0); }, 0) + ' messages';
   renderActivityLog();
 }
 
 function updateAdminKeyRow(p, key) {
-  const dot = document.getElementById('admin-' + p + '-dot');
-  const stat = document.getElementById('admin-' + p + '-status');
-  const prev = document.getElementById(p + '-key-preview');
-  if (key) { dot.className = 'ksd ok'; stat.textContent = 'Configured'; prev.textContent = key.slice(0, 8) + '••••••••' + key.slice(-4); }
+  var dot = document.getElementById('admin-' + p + '-dot');
+  var stat = document.getElementById('admin-' + p + '-status');
+  var prev = document.getElementById(p + '-key-preview');
+  if (key) { dot.className = 'ksd ok'; stat.textContent = 'Configured'; prev.textContent = key.slice(0,8) + '••••••••' + key.slice(-4); }
   else { dot.className = 'ksd mis'; stat.textContent = 'Missing'; prev.textContent = 'Not configured'; }
 }
 
 function togglePanel(id) { document.getElementById(id).classList.toggle('open'); }
 
 function adminSaveKey(p) {
-  const inp = document.getElementById('admin-' + p + '-input');
-  const val = inp.value.trim();
+  var inp = document.getElementById('admin-' + p + '-input');
+  var val = inp.value.trim();
   if (!val) { showToast('Enter a key first', 'error'); return; }
   localStorage.setItem('pragma_' + p + '_key', val);
   if (p === 'claude') { claudeKey = val; setProviderStatus('claude', 'connected', 'Key configured'); }
@@ -610,12 +604,12 @@ function clearKey(p) {
 }
 
 async function updatePassword(type) {
-  const np = document.getElementById('new-' + type + '-pw').value;
-  const cp = document.getElementById('confirm-' + type + '-pw').value;
+  var np = document.getElementById('new-' + type + '-pw').value;
+  var cp = document.getElementById('confirm-' + type + '-pw').value;
   if (!np) { showToast('Enter a new password', 'error'); return; }
   if (np !== cp) { showToast('Passwords do not match', 'error'); return; }
   if (np.length < 6) { showToast('Min 6 characters', 'error'); return; }
-  const hash = await hashPw(np);
+  var hash = await hashPw(np);
   localStorage.setItem('pragma_' + type + '_hash', hash);
   document.getElementById('new-' + type + '-pw').value = '';
   document.getElementById('confirm-' + type + '-pw').value = '';
@@ -624,30 +618,30 @@ async function updatePassword(type) {
 }
 
 function logActivity(type, text) {
-  const log = JSON.parse(localStorage.getItem('pragma_activity') || '[]');
-  log.unshift({ type, text, ts: Date.now() });
+  var log = JSON.parse(localStorage.getItem('pragma_activity') || '[]');
+  log.unshift({type: type, text: text, ts: Date.now()});
   if (log.length > 50) log.pop();
   localStorage.setItem('pragma_activity', JSON.stringify(log));
 }
 
 function renderActivityLog() {
-  const log = JSON.parse(localStorage.getItem('pragma_activity') || '[]');
-  const c = document.getElementById('activity-log');
-  if (log.length === 0) { c.innerHTML = '<div style="font-family:Lato,sans-serif;font-size:11px;font-weight:300;color:var(--sb-muted);text-align:center;padding:16px 0;">No activity yet</div>'; return; }
-  c.innerHTML = log.slice(0, 10).map(e => `<div class="activity-item"><div class="activity-dot ${e.type}"></div><div class="activity-text">${escHtml(e.text)}</div><div class="activity-time">${formatRelative(e.ts)}</div></div>`).join('');
+  var log = JSON.parse(localStorage.getItem('pragma_activity') || '[]');
+  var c = document.getElementById('activity-log');
+  if (log.length === 0) { c.innerHTML = '<div style="font-family:Lato,sans-serif;font-size:11px;color:var(--sb-muted);text-align:center;padding:16px 0;">No activity yet</div>'; return; }
+  c.innerHTML = log.slice(0,10).map(function(e){ return '<div class="activity-item"><div class="activity-dot ' + e.type + '"></div><div class="activity-text">' + escHtml(e.text) + '</div><div class="activity-time">' + formatRelative(e.ts) + '</div></div>'; }).join('');
 }
 
 function exportChats() {
-  const blob = new Blob([localStorage.getItem('pragma_chats') || '[]'], { type: 'application/json' });
-  const a = document.createElement('a');
+  var blob = new Blob([localStorage.getItem('pragma_chats') || '[]'], {type: 'application/json'});
+  var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'aeon-chats-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.download = 'aeon-chats-' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
   logActivity('key', 'Chat history exported');
   showToast('Chats exported', 'success');
 }
 
-let confirmCb = null;
+var confirmCb = null;
 function confirmAction(title, body, okLabel, cb) {
   document.getElementById('confirm-title').textContent = title;
   document.getElementById('confirm-body').textContent = body;
@@ -656,7 +650,7 @@ function confirmAction(title, body, okLabel, cb) {
   document.getElementById('confirm-modal').classList.add('open');
 }
 function closeConfirm() { document.getElementById('confirm-modal').classList.remove('open'); confirmCb = null; }
-document.getElementById('confirm-ok').addEventListener('click', () => { closeConfirm(); if (confirmCb) confirmCb(); });
+document.getElementById('confirm-ok').addEventListener('click', function(){ closeConfirm(); if (confirmCb) confirmCb(); });
 
 function doClearChats() {
   localStorage.removeItem('pragma_chats');
@@ -673,10 +667,10 @@ function doClearChats() {
 }
 
 function doFactoryReset() {
-  Object.keys(localStorage).filter(k => k.startsWith('pragma_')).forEach(k => localStorage.removeItem(k));
+  Object.keys(localStorage).filter(function(k){ return k.startsWith('pragma_'); }).forEach(function(k){ localStorage.removeItem(k); });
   chats = []; claudeKey = null; geminiKey = null; activeChatId = null;
   showToast('Factory reset complete');
-  setTimeout(() => showScreen('screen-login'), 700);
+  setTimeout(function(){ showScreen('screen-login'); }, 700);
 }
 
 // ════ CHAT ════
@@ -689,7 +683,8 @@ function initChat() {
 }
 
 function switchProvider(p, silent) {
-  activeProvider = p; localStorage.setItem('pragma_provider', p);
+  activeProvider = p;
+  localStorage.setItem('pragma_provider', p);
   document.getElementById('tab-claude').className = 'provider-tab' + (p === 'claude' ? ' ac' : '');
   document.getElementById('tab-gemini').className = 'provider-tab' + (p === 'gemini' ? ' ag' : '');
   document.getElementById('panel-claude').className = 'provider-key-panel' + (p === 'claude' ? ' visible' : '');
@@ -699,11 +694,12 @@ function switchProvider(p, silent) {
 }
 
 function updateBadge() {
-  const dot = document.getElementById('badge-dot'), label = document.getElementById('badge-label');
+  var dot = document.getElementById('badge-dot');
+  var label = document.getElementById('badge-label');
   if (activeProvider === 'claude') {
-    const m = document.getElementById('claude-model-select').value;
+    var m = document.getElementById('claude-model-select').value;
     dot.className = 'provider-dot claude';
-    label.textContent = m.replace('claude-', '').replace('-20250514', '').replace('-20251001', '');
+    label.textContent = m.replace('claude-','').replace('-20250514','').replace('-20251001','');
   } else {
     dot.className = 'provider-dot gemini';
     label.textContent = document.getElementById('gemini-model-select').value;
@@ -714,34 +710,36 @@ document.getElementById('claude-model-select').addEventListener('change', update
 document.getElementById('gemini-model-select').addEventListener('change', updateBadge);
 
 function setProviderStatus(p, state, text) {
-  const dot = document.getElementById(p + '-api-dot');
-  const label = document.getElementById(p + '-api-status-text');
+  var dot = document.getElementById(p + '-api-dot');
+  var label = document.getElementById(p + '-api-status-text');
   if (!dot) return;
-  dot.className = 'api-status-dot' +
-    (state === 'connected' ? (p === 'gemini' ? ' gc' : ' connected') : '') +
-    (state === 'error' ? ' error' : '');
+  dot.className = 'api-status-dot' + (state === 'connected' ? (p === 'gemini' ? ' gc' : ' connected') : '') + (state === 'error' ? ' error' : '');
   label.textContent = text;
 }
 
 function newChat() {
-  const id = 'chat_' + Date.now();
-  chats.unshift({ id, title: 'New conversation', messages: [], created: Date.now(), updated: Date.now() });
-  saveChats(); loadChat(id); document.getElementById('chat-input').focus();
+  var id = 'chat_' + Date.now();
+  chats.unshift({id: id, title: 'New conversation', messages: [], created: Date.now(), updated: Date.now()});
+  saveChats(); loadChat(id);
+  document.getElementById('chat-input').focus();
 }
 
 function loadChat(id) {
   activeChatId = id;
-  const chat = chats.find(c => c.id === id); if (!chat) return;
+  var chat = chats.find(function(c){ return c.id === id; });
+  if (!chat) return;
   document.getElementById('welcome').style.display = 'none';
   document.getElementById('topbar-title').textContent = chat.title;
   document.getElementById('messages-inner').innerHTML = '';
-  chat.messages.forEach(m => appendMessageDOM(m, false));
-  renderChatList(); scrollToBottom();
+  chat.messages.forEach(function(m){ appendMessageDOM(m, false); });
+  renderChatList();
+  scrollToBottom();
 }
 
 function deleteChat(id, e) {
   e.stopPropagation();
-  chats = chats.filter(c => c.id !== id); saveChats();
+  chats = chats.filter(function(c){ return c.id !== id; });
+  saveChats();
   if (activeChatId === id) {
     activeChatId = null;
     document.getElementById('messages-inner').innerHTML = '';
@@ -752,149 +750,233 @@ function deleteChat(id, e) {
 }
 
 function saveChats() {
-  const s = chats.map(c => ({ ...c, messages: c.messages.map(m => ({ ...m, files: (m.files || []).map(f => ({ name: f.name, type: f.type })) })) }));
-  try { localStorage.setItem('pragma_chats', JSON.stringify(s)); } catch (e) {}
+  var s = chats.map(function(c){
+    return Object.assign({}, c, {messages: c.messages.map(function(m){
+      return Object.assign({}, m, {files: (m.files||[]).map(function(f){ return {name:f.name,type:f.type}; })});
+    })});
+  });
+  try { localStorage.setItem('pragma_chats', JSON.stringify(s)); } catch(e) {}
 }
 
 function renderChatList() {
-  const list = document.getElementById('chat-list'), empty = document.getElementById('empty-state');
-  list.querySelectorAll('.chat-item').forEach(el => el.remove());
+  var list = document.getElementById('chat-list');
+  var empty = document.getElementById('empty-state');
+  list.querySelectorAll('.chat-item').forEach(function(el){ el.remove(); });
   if (chats.length === 0) { empty.style.display = 'block'; return; }
   empty.style.display = 'none';
-  chats.forEach(chat => {
-    const el = document.createElement('div');
+  chats.forEach(function(chat) {
+    var el = document.createElement('div');
     el.className = 'chat-item' + (chat.id === activeChatId ? ' active' : '');
-    el.innerHTML = `<div class="chat-item-icon"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="chat-item-content"><div class="chat-item-title">${escHtml(chat.title)}</div><div class="chat-item-meta">${formatRelative(chat.updated)} · ${chat.messages.length} msg${chat.messages.length !== 1 ? 's' : ''}</div></div><button class="chat-item-delete" onclick="deleteChat('${chat.id}',event)"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>`;
-    el.addEventListener('click', () => loadChat(chat.id));
+    el.innerHTML = '<div class="chat-item-icon"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="chat-item-content"><div class="chat-item-title">' + escHtml(chat.title) + '</div><div class="chat-item-meta">' + formatRelative(chat.updated) + ' · ' + chat.messages.length + ' msg' + (chat.messages.length !== 1 ? 's' : '') + '</div></div><button class="chat-item-delete" onclick="deleteChat(\'' + chat.id + '\',event)"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>';
+    el.addEventListener('click', function(){ loadChat(chat.id); });
     list.appendChild(el);
   });
 }
 
 // ════ FILES ════
-function handleFiles(e) { Array.from(e.target.files).forEach(f => { if (!stagedFiles.find(s => s.name === f.name)) stagedFiles.push(f); }); renderStagedFiles(); e.target.value = ''; }
-function renderStagedFiles() {
-  const c = document.getElementById('staged-files'); c.innerHTML = '';
-  stagedFiles.forEach((f, i) => { const el = document.createElement('div'); el.className = 'staged-file'; el.innerHTML = `<svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>${escHtml(f.name)}<button class="staged-file-remove" onclick="removeStaged(${i})"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>`; c.appendChild(el); });
+function handleFiles(e) {
+  Array.from(e.target.files).forEach(function(f){
+    if (!stagedFiles.find(function(s){ return s.name === f.name; })) stagedFiles.push(f);
+  });
+  renderStagedFiles();
+  e.target.value = '';
 }
+
+function renderStagedFiles() {
+  var c = document.getElementById('staged-files');
+  c.innerHTML = '';
+  stagedFiles.forEach(function(f, i) {
+    var el = document.createElement('div');
+    el.className = 'staged-file';
+    el.innerHTML = '<svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>' + escHtml(f.name) + '<button class="staged-file-remove" onclick="removeStaged(' + i + ')"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>';
+    c.appendChild(el);
+  });
+}
+
 function removeStaged(i) { stagedFiles.splice(i, 1); renderStagedFiles(); }
-async function readB64(f) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = () => rej(); r.readAsDataURL(f); }); }
-async function readTxt(f) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(); r.readAsText(f); }); }
+
+function readB64(f) {
+  return new Promise(function(res, rej) {
+    var r = new FileReader();
+    r.onload = function(){ res(r.result.split(',')[1]); };
+    r.onerror = rej;
+    r.readAsDataURL(f);
+  });
+}
+
+function readTxt(f) {
+  return new Promise(function(res, rej) {
+    var r = new FileReader();
+    r.onload = function(){ res(r.result); };
+    r.onerror = rej;
+    r.readAsText(f);
+  });
+}
 
 // ════ SEND ════
 function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
 function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 160) + 'px'; }
-function useStarter(card) { const t = card.querySelector('.starter-card-text').textContent; document.getElementById('chat-input').value = t; autoResize(document.getElementById('chat-input')); document.getElementById('chat-input').focus(); }
+function useStarter(card) {
+  var t = card.querySelector('.starter-card-text').textContent;
+  document.getElementById('chat-input').value = t;
+  autoResize(document.getElementById('chat-input'));
+  document.getElementById('chat-input').focus();
+}
 
 async function sendMessage() {
   if (isLoading) return;
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  const files = [...stagedFiles];
+  var input = document.getElementById('chat-input');
+  var text = input.value.trim();
+  var files = stagedFiles.slice();
   if (!text && files.length === 0) return;
-  const ak = activeProvider === 'claude' ? claudeKey : geminiKey;
+  var ak = activeProvider === 'claude' ? claudeKey : geminiKey;
   if (!ak) { showToast('No API key configured — visit Admin dashboard', 'error'); return; }
   if (!activeChatId) newChat();
-  const chat = chats.find(c => c.id === activeChatId); if (!chat) return;
-  const userMsg = { role: 'user', content: text, files: files.map(f => ({ name: f.name, type: f.type, file: f })), ts: Date.now() };
+  var chat = chats.find(function(c){ return c.id === activeChatId; });
+  if (!chat) return;
+  var userMsg = {role:'user', content:text, files:files.map(function(f){ return {name:f.name,type:f.type,file:f}; }), ts:Date.now()};
   chat.messages.push(userMsg);
-  if (chat.title === 'New conversation' && text) { chat.title = text.slice(0, 48) + (text.length > 48 ? '…' : ''); document.getElementById('topbar-title').textContent = chat.title; }
+  if (chat.title === 'New conversation' && text) {
+    chat.title = text.slice(0,48) + (text.length > 48 ? '...' : '');
+    document.getElementById('topbar-title').textContent = chat.title;
+  }
   chat.updated = Date.now();
-  input.value = ''; input.style.height = 'auto'; stagedFiles = []; renderStagedFiles();
+  input.value = ''; input.style.height = 'auto';
+  stagedFiles = []; renderStagedFiles();
   document.getElementById('welcome').style.display = 'none';
   appendMessageDOM(userMsg, true);
   isLoading = true; setSendLoading(true);
-  const typEl = appendTyping();
+  var typEl = appendTyping();
   try {
-    const aiText = activeProvider === 'claude'
-      ? await callClaude(chat.messages.slice(0, -1), userMsg, files)
-      : await callGemini(chat.messages.slice(0, -1), userMsg, files);
+    var aiText = activeProvider === 'claude'
+      ? await callClaude(chat.messages.slice(0,-1), userMsg, files)
+      : await callGemini(chat.messages.slice(0,-1), userMsg, files);
     typEl.remove();
-    const aiMsg = { role: 'assistant', content: aiText, ts: Date.now() };
-    chat.messages.push(aiMsg); chat.updated = Date.now(); saveChats(); renderChatList(); appendMessageDOM(aiMsg, true);
-  } catch (err) {
-    typEl.remove(); showToast(err.message || 'Something went wrong', 'error');
-    setProviderStatus(activeProvider, 'error', 'API error'); chat.messages.pop(); saveChats();
+    var aiMsg = {role:'assistant', content:aiText, ts:Date.now()};
+    chat.messages.push(aiMsg);
+    chat.updated = Date.now();
+    saveChats(); renderChatList(); appendMessageDOM(aiMsg, true);
+  } catch(err) {
+    typEl.remove();
+    showToast(err.message || 'Something went wrong', 'error');
+    setProviderStatus(activeProvider, 'error', 'API error');
+    chat.messages.pop(); saveChats();
   }
   isLoading = false; setSendLoading(false); scrollToBottom();
 }
 
 async function callClaude(history, userMsg, files) {
-  const model = document.getElementById('claude-model-select').value;
-  const msgs = [];
-  history.forEach(m => msgs.push({ role: m.role, content: m.content || '' }));
-  if (files.length === 0) { msgs.push({ role: 'user', content: userMsg.content || '' }); }
-  else {
-    const parts = [];
-    for (const f of files) { try {
-      if (f.type === 'application/pdf') { const b = await readB64(f); parts.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b } }); }
-      else if (f.type.startsWith('image/')) { const b = await readB64(f); parts.push({ type: 'image', source: { type: 'base64', media_type: f.type, data: b } }); }
-      else if (f.type.startsWith('text/') || /\.(txt|md|csv|json)$/i.test(f.name)) { const t = await readTxt(f); parts.push({ type: 'text', text: `--- File: ${f.name} ---
-${t}
---- End ---` }); }
-    } catch (e) {} }
-    if (userMsg.content) parts.push({ type: 'text', text: userMsg.content });
-    msgs.push({ role: 'user', content: parts });
+  var model = document.getElementById('claude-model-select').value;
+  var msgs = [];
+  history.forEach(function(m){ msgs.push({role:m.role, content:m.content||''}); });
+  if (files.length === 0) {
+    msgs.push({role:'user', content:userMsg.content||''});
+  } else {
+    var parts = [];
+    for (var i=0; i<files.length; i++) {
+      var f = files[i];
+      try {
+        if (f.type === 'application/pdf') {
+          var b = await readB64(f);
+          parts.push({type:'document', source:{type:'base64', media_type:'application/pdf', data:b}});
+        } else if (f.type.startsWith('image/')) {
+          var b = await readB64(f);
+          parts.push({type:'image', source:{type:'base64', media_type:f.type, data:b}});
+        } else if (f.type.startsWith('text/') || /\.(txt|md|csv|json)$/i.test(f.name)) {
+          var t = await readTxt(f);
+          parts.push({type:'text', text:'--- File: '+f.name+' ---\n'+t+'\n--- End ---'});
+        }
+      } catch(e) {}
+    }
+    if (userMsg.content) parts.push({type:'text', text:userMsg.content});
+    msgs.push({role:'user', content:parts});
   }
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': claudeKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-calls': 'true' },
-    body: JSON.stringify({ model, max_tokens: 4096, system: `You are Aeon, an expert AI work assistant helping Prashanth, a consultant at Accenture focused on HDB's digital transformation programme. You assist with proposal writing, workshop design, capability frameworks, document analysis, and strategic communications. Be direct, precise, and professional. Format responses clearly using markdown where helpful.`, messages: msgs })
+  var r = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':claudeKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-calls':'true'},
+    body:JSON.stringify({model:model, max_tokens:4096, system:'You are Aeon, an expert AI work assistant helping Prashanth, a consultant at Accenture focused on HDB\'s digital transformation programme. You assist with proposal writing, workshop design, capability frameworks, document analysis, and strategic communications. Be direct, precise, and professional. Format responses clearly using markdown where helpful.', messages:msgs})
   });
-  if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.error?.message || `Claude API error ${r.status}`); }
-  const d = await r.json(); return d.content.map(b => b.text || '').join('');
+  if (!r.ok) { var e = await r.json().catch(function(){return {};}); throw new Error(e.error ? e.error.message : 'Claude API error ' + r.status); }
+  var d = await r.json();
+  return d.content.map(function(b){ return b.text||''; }).join('');
 }
 
 async function callGemini(history, userMsg, files) {
-  const model = document.getElementById('gemini-model-select').value;
-  const contents = [];
-  history.forEach(m => contents.push({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content || '' }] }));
-  const parts = [];
-  for (const f of files) { try {
-    if (f.type === 'application/pdf' || f.type.startsWith('image/')) { const b = await readB64(f); parts.push({ inlineData: { mimeType: f.type, data: b } }); }
-    else if (f.type.startsWith('text/') || /\.(txt|md|csv|json)$/i.test(f.name)) { const t = await readTxt(f); parts.push({ text: `--- File: ${f.name} ---
-${t}
---- End ---` }); }
-  } catch (e) {} }
-  if (userMsg.content) parts.push({ text: userMsg.content });
-  if (parts.length === 0) parts.push({ text: '' });
-  contents.push({ role: 'user', parts });
-  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents, systemInstruction: { parts: [{ text: 'You are Aeon, an expert AI work assistant helping Prashanth at Accenture on HDB digital transformation. Be direct, precise, and professional.' }] }, generationConfig: { maxOutputTokens: 4096 } })
+  var model = document.getElementById('gemini-model-select').value;
+  var contents = [];
+  history.forEach(function(m){ contents.push({role:m.role==='assistant'?'model':'user', parts:[{text:m.content||''}]}); });
+  var parts = [];
+  for (var i=0; i<files.length; i++) {
+    var f = files[i];
+    try {
+      if (f.type === 'application/pdf' || f.type.startsWith('image/')) {
+        var b = await readB64(f);
+        parts.push({inlineData:{mimeType:f.type, data:b}});
+      } else if (f.type.startsWith('text/') || /\.(txt|md|csv|json)$/i.test(f.name)) {
+        var t = await readTxt(f);
+        parts.push({text:'--- File: '+f.name+' ---\n'+t+'\n--- End ---'});
+      }
+    } catch(e) {}
+  }
+  if (userMsg.content) parts.push({text:userMsg.content});
+  if (parts.length === 0) parts.push({text:''});
+  contents.push({role:'user', parts:parts});
+  var r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+geminiKey, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents:contents, systemInstruction:{parts:[{text:'You are Aeon, an expert AI work assistant helping Prashanth at Accenture on HDB digital transformation. Be direct, precise, and professional.'}]}, generationConfig:{maxOutputTokens:4096}})
   });
-  if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.error?.message || `Gemini API error ${r.status}`); }
-  const d = await r.json(); return d.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '(No response)';
+  if (!r.ok) { var e = await r.json().catch(function(){return {};}); throw new Error(e.error ? e.error.message : 'Gemini API error ' + r.status); }
+  var d = await r.json();
+  return d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts
+    ? d.candidates[0].content.parts.map(function(p){ return p.text||''; }).join('')
+    : '(No response)';
 }
 
 // ════ DOM ════
 function appendMessageDOM(msg, animate) {
-  const inner = document.getElementById('messages-inner');
-  const row = document.createElement('div'); row.className = 'message-row ' + msg.role;
-  let fHtml = '';
-  if (msg.files && msg.files.length > 0) fHtml = '<div class="msg-file-list">' + msg.files.map(f => `<div class="msg-file-badge"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>${escHtml(f.name)}</div>`).join('') + '</div>';
-  row.innerHTML = `<div class="msg-avatar ${msg.role}">${msg.role === 'user' ? 'PK' : 'AI'}</div><div class="msg-body"><div class="msg-bubble">${fHtml + (msg.content ? renderMd(msg.content) : '')}</div><div class="msg-meta">${formatTime(msg.ts)}</div></div>`;
-  inner.appendChild(row); if (animate) scrollToBottom();
+  var inner = document.getElementById('messages-inner');
+  var row = document.createElement('div');
+  row.className = 'message-row ' + msg.role;
+  var fHtml = '';
+  if (msg.files && msg.files.length > 0) {
+    fHtml = '<div class="msg-file-list">' + msg.files.map(function(f){ return '<div class="msg-file-badge"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>'+escHtml(f.name)+'</div>'; }).join('') + '</div>';
+  }
+  row.innerHTML = '<div class="msg-avatar '+msg.role+'">'+(msg.role==='user'?'PK':'AI')+'</div><div class="msg-body"><div class="msg-bubble">'+fHtml+(msg.content?renderMd(msg.content):'')+'</div><div class="msg-meta">'+formatTime(msg.ts)+'</div></div>';
+  inner.appendChild(row);
+  if (animate) scrollToBottom();
 }
+
 function appendTyping() {
-  const inner = document.getElementById('messages-inner'); const row = document.createElement('div'); row.className = 'message-row ai';
-  row.innerHTML = `<div class="msg-avatar ai">AI</div><div class="msg-body"><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>`;
-  inner.appendChild(row); scrollToBottom(); return row;
+  var inner = document.getElementById('messages-inner');
+  var row = document.createElement('div');
+  row.className = 'message-row ai';
+  row.innerHTML = '<div class="msg-avatar ai">AI</div><div class="msg-body"><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>';
+  inner.appendChild(row);
+  scrollToBottom();
+  return row;
 }
+
 function setSendLoading(on) {
-  const btn = document.getElementById('send-btn');
+  var btn = document.getElementById('send-btn');
   if (on) { btn.disabled = true; btn.classList.add('loading'); btn.innerHTML = '<div class="spinner"></div>'; }
-  else { btn.disabled = false; btn.classList.remove('loading'); btn.innerHTML = `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`; }
+  else { btn.disabled = false; btn.classList.remove('loading'); btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>'; }
 }
-function scrollToBottom() { const c = document.getElementById('messages-container'); c.scrollTo({ top: c.scrollHeight, behavior: 'smooth' }); }
-function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+function scrollToBottom() { var c = document.getElementById('messages-container'); c.scrollTo({top:c.scrollHeight, behavior:'smooth'}); }
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function renderMd(text) {
-  let h = escHtml(text);
-  h = h.replace(/```(\w+)?\n?([\s\S]*?)```/g, function(_,l,c){return '<pre><code>'+c.trim()+'</code></pre>';});
+  var h = escHtml(text);
+  h = h.replace(/```(\w+)?\n?([\s\S]*?)```/g, function(_,l,c){ return '<pre><code>'+c.trim()+'</code></pre>'; });
   h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
   h = h.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   h = h.replace(/\*([^*]+)\*/g, '<em>$1</em>');
   h = h.replace(/^#{1,3} (.+)$/gm, '<p><strong>$1</strong></p>');
-  h = h.replace(/^[*\-] (.+)$/gm, '<li>$1</li>');
+  h = h.replace(/^[*-] (.+)$/gm, '<li>$1</li>');
   h = h.replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>');
   h = h.replace(/<\/ul>\s*<ul>/g, '');
   h = h.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
@@ -902,32 +984,47 @@ function renderMd(text) {
   h = h.replace(/\n/g, '<br>');
   return '<p>' + h + '</p>';
 }
-function formatTime(ts) { if (!ts) return ''; return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+
+function formatTime(ts) { if (!ts) return ''; return new Date(ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+
 function formatRelative(ts) {
   if (!ts) return '';
-  const d = Date.now() - ts, m = Math.floor(d / 60000), hrs = Math.floor(d / 3600000), days = Math.floor(d / 86400000);
-  if (m < 1) return 'just now'; if (m < 60) return `${m}m ago`; if (hrs < 24) return `${hrs}h ago`; return `${days}d ago`;
+  var d = Date.now()-ts, m = Math.floor(d/60000), hrs = Math.floor(d/3600000), days = Math.floor(d/86400000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m+'m ago';
+  if (hrs < 24) return hrs+'h ago';
+  return days+'d ago';
 }
-let toastT;
-function showToast(msg, type = '') {
-  const el = document.getElementById('toast'); el.textContent = msg;
-  el.className = 'show' + (type ? ' ' + type : '');
-  clearTimeout(toastT); toastT = setTimeout(() => { el.className = ''; }, 3000);
+
+var toastT;
+function showToast(msg, type) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (type ? ' '+type : '');
+  clearTimeout(toastT);
+  toastT = setTimeout(function(){ el.className = ''; }, 3000);
 }
 
 // ════ THEME ════
-const SUN_ICON = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
-const MOON_ICON = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+var SUN_ICON = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
+var MOON_ICON = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('pragma_theme', theme);
-  const btn = document.getElementById('theme-toggle-btn');
+  var btn = document.getElementById('theme-toggle-btn');
   if (btn) btn.innerHTML = theme === 'light' ? MOON_ICON : SUN_ICON;
 }
-function toggleTheme() { const current = document.documentElement.getAttribute('data-theme') || 'dark'; applyTheme(current === 'dark' ? 'light' : 'dark'); }
-(function() { const saved = localStorage.getItem('pragma_theme') || 'dark'; applyTheme(saved); })();
+function toggleTheme() {
+  var current = document.documentElement.getAttribute('data-theme') || 'dark';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+
+// Apply saved theme immediately
+applyTheme(localStorage.getItem('pragma_theme') || 'dark');
+
 }); // end DOMContentLoaded
-</script></script>
+</script>
 </head>
 <body>
 
