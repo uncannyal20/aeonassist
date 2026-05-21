@@ -449,8 +449,380 @@ html[data-theme="light"] .aeon-bg-logo {
 
 </style>
 
+
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="screen active" id="screen-login">
+  <div class="login-bg-grid"></div>
+  <div class="login-bg-glow"></div>
+  <div class="aeon-bg-logo"></div>
+  <div class="login-card">
+    <div class="login-logo-wrap">
+      <div class="login-logo-icon">
+        <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="20,3 37,20 20,37 3,20" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linejoin="round"/><polygon points="20,11 29,20 20,29 11,20" stroke="currentColor" stroke-width="0.9" fill="none" stroke-linejoin="round" opacity="0.45"/><line x1="20" y1="3" x2="20" y2="37" stroke="currentColor" stroke-width="0.6" opacity="0.2"/><line x1="3" y1="20" x2="37" y2="20" stroke="currentColor" stroke-width="0.6" opacity="0.2"/><circle cx="20" cy="3"  r="2.3" fill="currentColor"/><circle cx="37" cy="20" r="2.3" fill="currentColor"/><circle cx="20" cy="37" r="2.3" fill="currentColor"/><circle cx="3"  cy="20" r="2.3" fill="currentColor"/><circle cx="20" cy="20" r="3.4" fill="currentColor"/></svg>
+      </div>
+      <div>
+        <div class="login-logo-text">AEON</div>
+        <div class="login-logo-sub">AI Work Assistant</div>
+      </div>
+    </div>
+    <div class="login-tagline">Your private intelligence layer for work.</div>
+    <div id="login-error" class="login-error">Incorrect password. Please try again.</div>
+    <div class="login-field">
+      <label>Password</label>
+      <input class="login-input" type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign in to Aeon</button>
+    <div class="login-footer">
+      <a class="login-admin-link" onclick="showScreen('screen-admin-login')">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Admin dashboard
+      </a>
+      <span class="login-version" title="v2.0">v2.0</span>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="screen" id="screen-admin-login">
+  <div class="aeon-bg-logo"></div>
+  <div class="login-bg-grid" style="background-image:linear-gradient(rgba(66,133,244,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(66,133,244,.03) 1px,transparent 1px);background-size:48px 48px;"></div>
+  <div class="login-bg-glow" style="background:radial-gradient(circle,rgba(66,133,244,.07) 0%,transparent 70%);"></div>
+  <div class="login-card">
+    <div class="login-logo-wrap">
+      <div class="login-logo-icon" style="background:#1a4a8a;">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <div>
+        <div class="login-logo-text">Admin Access</div>
+        <div class="login-logo-sub" style="color:#3a7aaa;">Aeon Dashboard</div>
+      </div>
+    </div>
+    <div class="login-tagline" style="color:#3a7aaa;">Manage API keys, security &amp; data.</div>
+    <div id="admin-login-error" class="login-error">Incorrect admin password.</div>
+    <div class="login-field">
+      <label>Admin Password</label>
+      <input class="login-input" type="password" id="admin-login-password" placeholder="Enter admin password" autocomplete="off">
+    </div>
+    <button class="login-btn" style="background:#4285f4;" id="admin-login-btn" onclick="doAdminLogin()">Access Dashboard</button>
+    <div class="login-footer">
+      <a class="login-admin-link" onclick="showScreen('screen-login')">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Back to login
+      </a>
+      <span class="login-version" title="admin">admin</span>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div class="screen" id="screen-admin">
+  <div style="display:flex;flex-direction:column;width:100%;height:100%;">
+    <div class="admin-topbar">
+      <div class="admin-topbar-left">
+        <div class="admin-logo"><div class="admin-logo-dot"></div>AEON</div>
+        <div class="admin-badge">Admin Dashboard</div>
+      </div>
+      <div class="admin-topbar-right">
+        <button class="admin-nav-btn ghost" onclick="showScreen('screen-login')">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Login Screen
+        </button>
+        <button class="admin-nav-btn primary" onclick="gotoChat()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Open Chat
+        </button>
+        <button class="admin-nav-btn danger" onclick="doLogout()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Sign Out
+        </button>
+      </div>
+    </div>
+    <div class="admin-body">
+
+      <div class="admin-grid">
+        <div class="stat-card ac">
+          <div class="stat-label">Total Conversations</div>
+          <div class="stat-value" id="stat-chats">0</div>
+          <div class="stat-sub">stored locally</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">API Keys Configured</div>
+          <div class="stat-value" id="stat-keys">0 / 2</div>
+          <div class="stat-sub">Claude + Gemini</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Last Login</div>
+          <div class="stat-value" style="font-size:15px;margin-top:5px;" id="stat-last-login">—</div>
+          <div class="stat-sub" id="stat-login-count">0 sessions</div>
+        </div>
+      </div>
+
+      <!-- API Key Management -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <div>
+            <div class="admin-section-title">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+              API Key Management
+            </div>
+            <div class="admin-section-sub">Store and manage credentials for Claude and Gemini</div>
+          </div>
+        </div>
+
+        <div class="key-row">
+          <div class="key-row-icon ci">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+          </div>
+          <div class="key-row-info">
+            <div class="key-row-name">Anthropic / Claude</div>
+            <div class="key-row-preview" id="claude-key-preview">Not configured</div>
+          </div>
+          <div class="key-row-status">
+            <div class="ksd" id="admin-claude-dot"></div>
+            <span class="key-status-text" id="admin-claude-status">Missing</span>
+          </div>
+          <div class="key-row-actions">
+            <button class="kab" onclick="togglePanel('claude-edit-panel')">Edit</button>
+            <button class="kab danger" onclick="clearKey('claude')">Clear</button>
+          </div>
+        </div>
+        <div class="key-edit-panel" id="claude-edit-panel">
+          <div class="key-edit-row">
+            <input class="admin-input" type="password" id="admin-claude-input" placeholder="sk-ant-api03-...">
+            <button class="admin-save-btn" onclick="adminSaveKey('claude')">Save Key</button>
+          </div>
+        </div>
+
+        <div class="key-row">
+          <div class="key-row-icon gi">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div class="key-row-info">
+            <div class="key-row-name">Google AI / Gemini</div>
+            <div class="key-row-preview" id="gemini-key-preview">Not configured</div>
+          </div>
+          <div class="key-row-status">
+            <div class="ksd" id="admin-gemini-dot"></div>
+            <span class="key-status-text" id="admin-gemini-status">Missing</span>
+          </div>
+          <div class="key-row-actions">
+            <button class="kab" onclick="togglePanel('gemini-edit-panel')">Edit</button>
+            <button class="kab danger" onclick="clearKey('gemini')">Clear</button>
+          </div>
+        </div>
+        <div class="key-edit-panel" id="gemini-edit-panel">
+          <div class="key-edit-row">
+            <input class="admin-input" type="password" id="admin-gemini-input" placeholder="AIzaSy...">
+            <button class="admin-save-btn gem" onclick="adminSaveKey('gemini')">Save Key</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Management -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <div>
+            <div class="admin-section-title">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              Password &amp; Security
+            </div>
+            <div class="admin-section-sub">Update login and admin passwords independently</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--sb-text);margin-bottom:12px;">Chat Login Password</div>
+            <div class="pw-form">
+              <div class="pw-field"><label>New Password</label><input class="admin-input" type="password" id="new-chat-pw" placeholder="Min 6 characters"></div>
+              <div class="pw-field"><label>Confirm</label><input class="admin-input" type="password" id="confirm-chat-pw" placeholder="Repeat password"></div>
+              <button class="pw-submit" onclick="updatePassword('chat')">Update Chat Password</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--sb-text);margin-bottom:12px;">Admin Dashboard Password</div>
+            <div class="pw-form">
+              <div class="pw-field"><label>New Password</label><input class="admin-input" type="password" id="new-admin-pw" placeholder="Min 6 characters"></div>
+              <div class="pw-field"><label>Confirm</label><input class="admin-input" type="password" id="confirm-admin-pw" placeholder="Repeat password"></div>
+              <button class="pw-submit" onclick="updatePassword('admin')">Update Admin Password</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity + Data -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+        <div class="admin-section">
+          <div class="admin-section-header">
+            <div>
+              <div class="admin-section-title">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Activity Log
+              </div>
+            </div>
+          </div>
+          <div id="activity-log" style="font-family:'Lato',monospace;font-size:11px;color:var(--sb-muted);text-align:center;padding:16px 0;">No activity yet</div>
+        </div>
+        <div class="admin-section">
+          <div class="admin-section-header">
+            <div>
+              <div class="admin-section-title">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                Data Management
+              </div>
+              <div class="admin-section-sub">Export or clear stored data</div>
+            </div>
+          </div>
+          <div style="margin-bottom:14px;font-family:'Lato',monospace;font-size:11px;color:var(--sb-text);" id="storage-usage">Calculating…</div>
+          <div class="data-actions">
+            <button class="data-btn" onclick="exportChats()">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Export Chats
+            </button>
+            <button class="data-btn destr" onclick="confirmAction('Clear All Conversations','This permanently deletes all chat history and cannot be undone.','Clear All',doClearChats)">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>
+              Clear Chats
+            </button>
+            <button class="data-btn destr" onclick="confirmAction('Factory Reset','Deletes ALL data: conversations, API keys, passwords, logs. Cannot be undone.','Reset Everything',doFactoryReset)">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9M3 3v6h6"/></svg>
+              Factory Reset
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT SCREEN -->
+<div class="screen" id="screen-chat">
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo"><span style="color:var(--accent);display:flex;align-items:center;"><svg width="16" height="16" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="20,3 37,20 20,37 3,20" stroke="currentColor" stroke-width="2.0" fill="none" stroke-linejoin="round"/><polygon points="20,11 29,20 20,29 11,20" stroke="currentColor" stroke-width="0.9" fill="none" stroke-linejoin="round" opacity="0.45"/><line x1="20" y1="3" x2="20" y2="37" stroke="currentColor" stroke-width="0.6" opacity="0.2"/><line x1="3" y1="20" x2="37" y2="20" stroke="currentColor" stroke-width="0.6" opacity="0.2"/><circle cx="20" cy="3"  r="2.4" fill="currentColor"/><circle cx="37" cy="20" r="2.4" fill="currentColor"/><circle cx="20" cy="37" r="2.4" fill="currentColor"/><circle cx="3"  cy="20" r="2.4" fill="currentColor"/><circle cx="20" cy="20" r="3.2" fill="currentColor"/></svg></span>AEON</div>
+      <div style="display:flex;gap:3px;">
+        <button class="sib ab" onclick="gotoAdmin()" title="Admin Dashboard">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </button>
+        <button class="sib" onclick="doLogout()" title="Sign Out">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        </button>
+      </div>
+    </div>
+    <button class="new-chat-btn" onclick="newChat()">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      New conversation
+    </button>
+    <div class="aeon-bg-logo"></div><div class="sidebar-section-label">Conversations</div>
+    <div class="chat-list" id="chat-list">
+      <div class="empty-state" id="empty-state">No conversations yet</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="provider-switcher">
+        <button class="provider-tab ac" id="tab-claude" onclick="switchProvider('claude')">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+          Claude
+        </button>
+        <button class="provider-tab" id="tab-gemini" onclick="switchProvider('gemini')">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Gemini
+        </button>
+      </div>
+      <div class="provider-key-panel visible" id="panel-claude">
+        <span class="api-key-label">Model</span>
+        <select class="model-select" id="claude-model-select">
+          <option value="claude-sonnet-4-20250514">claude-sonnet-4 (default)</option>
+          <option value="claude-opus-4-5">claude-opus-4.5</option>
+          <option value="claude-haiku-4-5-20251001">claude-haiku-4.5</option>
+        </select>
+        <div class="api-status">
+          <div class="api-status-dot" id="claude-api-dot"></div>
+          <span class="api-status-text" id="claude-api-status-text">Not configured</span>
+        </div>
+      </div>
+      <div class="provider-key-panel" id="panel-gemini">
+        <span class="api-key-label">Model</span>
+        <select class="model-select" id="gemini-model-select">
+          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+          <option value="gemini-2.5-pro-preview-06-05">Gemini 2.5 Pro</option>
+          <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+        </select>
+        <div class="api-status">
+          <div class="api-status-dot" id="gemini-api-dot"></div>
+          <span class="api-status-text" id="gemini-api-status-text">Not configured</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div class="aeon-bg-logo"></div><div id="topbar">
+      <div class="chat-title-display" id="topbar-title">Select or start a conversation</div>
+      <div class="topbar-actions">
+        <div class="model-badge" id="model-badge">
+          <div class="provider-dot claude" id="badge-dot"></div>
+          <span id="badge-label">claude-sonnet-4</span>
+        </div>
+        <button class="tb-icon-btn" onclick="gotoAdmin()" title="Admin">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="messages-container">
+      <div id="welcome">
+        <div class="welcome-mark">
+          <svg width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="welcome-h">Good to see you, Prashanth.</div>
+        <div class="welcome-sub">Your AI work assistant. Ask anything, upload documents for analysis, or pick a starter below.</div>
+        <div class="starter-grid">
+          <div class="starter-card" onclick="useStarter(this)"><div class="starter-card-label">Proposal</div><div class="starter-card-text">Help me draft a compelling executive summary for a bid</div></div>
+          <div class="starter-card" onclick="useStarter(this)"><div class="starter-card-label">Workshop</div><div class="starter-card-text">Design an agenda for a product leadership workshop</div></div>
+          <div class="starter-card" onclick="useStarter(this)"><div class="starter-card-label">Analysis</div><div class="starter-card-text">Summarise and extract key themes from this document</div></div>
+          <div class="starter-card" onclick="useStarter(this)"><div class="starter-card-label">Framework</div><div class="starter-card-text">Build a capability assessment framework for my team</div></div>
+        </div>
+      </div>
+      <div class="messages-inner" id="messages-inner"></div>
+    </div>
+    <div id="input-area">
+      <div class="input-inner">
+        <div id="staged-files"></div>
+        <div class="input-row">
+          <button class="toolbar-btn" onclick="document.getElementById('file-input').click()" title="Attach file">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+          <div class="input-box-wrap">
+            <textarea id="chat-input" placeholder="Ask anything about your work…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          </div>
+          <button class="send-btn" id="send-btn" onclick="sendMessage()">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </div>
+        <div class="input-hint">Enter to send · Shift+Enter for new line · Attach PDFs, images, text files</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<input type="file" id="file-input" multiple accept=".pdf,.txt,.md,.csv,.json,.png,.jpg,.jpeg,.webp,.gif" onchange="handleFiles(event)">
+<div id="toast"></div>
+<div id="confirm-modal">
+  <div class="confirm-card">
+    <div class="confirm-title" id="confirm-title">Are you sure?</div>
+    <div class="confirm-body" id="confirm-body">This cannot be undone.</div>
+    <div class="confirm-actions">
+      <button class="confirm-btn cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="confirm-btn ok" id="confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
 
 // ════ STATE ════
 var claudeKey = null;
@@ -1024,407 +1396,6 @@ function toggleTheme() {
 applyTheme(localStorage.getItem('pragma_theme') || 'dark');
 
 
-// ════ EXPOSE TO HTML ONCLICKS ════
-window.showScreen = showScreen;
-window.gotoAdmin = gotoAdmin;
-window.gotoChat = gotoChat;
-window.doLogin = doLogin;
-window.doAdminLogin = doAdminLogin;
-window.doLogout = doLogout;
-window.newChat = newChat;
-window.loadChat = loadChat;
-window.deleteChat = deleteChat;
-window.togglePanel = togglePanel;
-window.adminSaveKey = adminSaveKey;
-window.clearKey = clearKey;
-window.updatePassword = updatePassword;
-window.useStarter = useStarter;
-window.sendMessage = sendMessage;
-window.handleKey = handleKey;
-window.autoResize = autoResize;
-window.handleFiles = handleFiles;
-window.removeStaged = removeStaged;
-window.switchProvider = switchProvider;
-window.toggleTheme = toggleTheme;
-window.exportChats = exportChats;
-window.confirmAction = confirmAction;
-window.closeConfirm = closeConfirm;
-window.doClearChats = doClearChats;
-window.doFactoryReset = doFactoryReset;
-
-}); // end DOMContentLoaded
 </script>
-</head>
-<body>
-
-<!-- LOGIN -->
-<div class="screen active" id="screen-login">
-  <div class="login-bg-grid"></div>
-  <div class="login-bg-glow"></div>
-  <div class="aeon-bg-logo"></div>
-  <div class="login-card">
-    <div class="login-logo-wrap">
-      <div class="login-logo-icon">
-        <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="20,3 37,20 20,37 3,20" stroke="currentColor" stroke-width="1.9" fill="none" stroke-linejoin="round"/><polygon points="20,11 29,20 20,29 11,20" stroke="currentColor" stroke-width="0.9" fill="none" stroke-linejoin="round" opacity="0.45"/><line x1="20" y1="3" x2="20" y2="37" stroke="currentColor" stroke-width="0.6" opacity="0.2"/><line x1="3" y1="20" x2="37" y2="20" stroke="currentColor" stroke-width="0.6" opacity="0.2"/><circle cx="20" cy="3"  r="2.3" fill="currentColor"/><circle cx="37" cy="20" r="2.3" fill="currentColor"/><circle cx="20" cy="37" r="2.3" fill="currentColor"/><circle cx="3"  cy="20" r="2.3" fill="currentColor"/><circle cx="20" cy="20" r="3.4" fill="currentColor"/></svg>
-      </div>
-      <div>
-        <div class="login-logo-text">AEON</div>
-        <div class="login-logo-sub">AI Work Assistant</div>
-      </div>
-    </div>
-    <div class="login-tagline">Your private intelligence layer for work.</div>
-    <div id="login-error" class="login-error">Incorrect password. Please try again.</div>
-    <div class="login-field">
-      <label>Password</label>
-      <input class="login-input" type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
-    </div>
-    <button class="login-btn" onclick="doLogin()">Sign in to Aeon</button>
-    <div class="login-footer">
-      <a class="login-admin-link" onclick="showScreen('screen-admin-login')">
-        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        Admin dashboard
-      </a>
-      <span class="login-version" title="v2.0">v2.0</span>
-    </div>
-  </div>
-</div>
-
-<!-- ADMIN LOGIN -->
-<div class="screen" id="screen-admin-login">
-  <div class="aeon-bg-logo"></div>
-  <div class="login-bg-grid" style="background-image:linear-gradient(rgba(66,133,244,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(66,133,244,.03) 1px,transparent 1px);background-size:48px 48px;"></div>
-  <div class="login-bg-glow" style="background:radial-gradient(circle,rgba(66,133,244,.07) 0%,transparent 70%);"></div>
-  <div class="login-card">
-    <div class="login-logo-wrap">
-      <div class="login-logo-icon" style="background:#1a4a8a;">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      </div>
-      <div>
-        <div class="login-logo-text">Admin Access</div>
-        <div class="login-logo-sub" style="color:#3a7aaa;">Aeon Dashboard</div>
-      </div>
-    </div>
-    <div class="login-tagline" style="color:#3a7aaa;">Manage API keys, security &amp; data.</div>
-    <div id="admin-login-error" class="login-error">Incorrect admin password.</div>
-    <div class="login-field">
-      <label>Admin Password</label>
-      <input class="login-input" type="password" id="admin-login-password" placeholder="Enter admin password" autocomplete="off">
-    </div>
-    <button class="login-btn" style="background:#4285f4;" id="admin-login-btn" onclick="doAdminLogin()">Access Dashboard</button>
-    <div class="login-footer">
-      <a class="login-admin-link" onclick="showScreen('screen-login')">
-        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        Back to login
-      </a>
-      <span class="login-version" title="admin">admin</span>
-    </div>
-  </div>
-</div>
-
-<!-- ADMIN DASHBOARD -->
-<div class="screen" id="screen-admin">
-  <div style="display:flex;flex-direction:column;width:100%;height:100%;">
-    <div class="admin-topbar">
-      <div class="admin-topbar-left">
-        <div class="admin-logo"><div class="admin-logo-dot"></div>AEON</div>
-        <div class="admin-badge">Admin Dashboard</div>
-      </div>
-      <div class="admin-topbar-right">
-        <button class="admin-nav-btn ghost" onclick="showScreen('screen-login')">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-          Login Screen
-        </button>
-        <button class="admin-nav-btn primary" onclick="gotoChat()">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-          Open Chat
-        </button>
-        <button class="admin-nav-btn danger" onclick="doLogout()">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-          Sign Out
-        </button>
-      </div>
-    </div>
-    <div class="admin-body">
-
-      <div class="admin-grid">
-        <div class="stat-card ac">
-          <div class="stat-label">Total Conversations</div>
-          <div class="stat-value" id="stat-chats">0</div>
-          <div class="stat-sub">stored locally</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">API Keys Configured</div>
-          <div class="stat-value" id="stat-keys">0 / 2</div>
-          <div class="stat-sub">Claude + Gemini</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Last Login</div>
-          <div class="stat-value" style="font-size:15px;margin-top:5px;" id="stat-last-login">—</div>
-          <div class="stat-sub" id="stat-login-count">0 sessions</div>
-        </div>
-      </div>
-
-      <!-- API Key Management -->
-      <div class="admin-section">
-        <div class="admin-section-header">
-          <div>
-            <div class="admin-section-title">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-              API Key Management
-            </div>
-            <div class="admin-section-sub">Store and manage credentials for Claude and Gemini</div>
-          </div>
-        </div>
-
-        <div class="key-row">
-          <div class="key-row-icon ci">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-          </div>
-          <div class="key-row-info">
-            <div class="key-row-name">Anthropic / Claude</div>
-            <div class="key-row-preview" id="claude-key-preview">Not configured</div>
-          </div>
-          <div class="key-row-status">
-            <div class="ksd" id="admin-claude-dot"></div>
-            <span class="key-status-text" id="admin-claude-status">Missing</span>
-          </div>
-          <div class="key-row-actions">
-            <button class="kab" onclick="togglePanel('claude-edit-panel')">Edit</button>
-            <button class="kab danger" onclick="clearKey('claude')">Clear</button>
-          </div>
-        </div>
-        <div class="key-edit-panel" id="claude-edit-panel">
-          <div class="key-edit-row">
-            <input class="admin-input" type="password" id="admin-claude-input" placeholder="sk-ant-api03-...">
-            <button class="admin-save-btn" onclick="adminSaveKey('claude')">Save Key</button>
-          </div>
-        </div>
-
-        <div class="key-row">
-          <div class="key-row-icon gi">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          </div>
-          <div class="key-row-info">
-            <div class="key-row-name">Google AI / Gemini</div>
-            <div class="key-row-preview" id="gemini-key-preview">Not configured</div>
-          </div>
-          <div class="key-row-status">
-            <div class="ksd" id="admin-gemini-dot"></div>
-            <span class="key-status-text" id="admin-gemini-status">Missing</span>
-          </div>
-          <div class="key-row-actions">
-            <button class="kab" onclick="togglePanel('gemini-edit-panel')">Edit</button>
-            <button class="kab danger" onclick="clearKey('gemini')">Clear</button>
-          </div>
-        </div>
-        <div class="key-edit-panel" id="gemini-edit-panel">
-          <div class="key-edit-row">
-            <input class="admin-input" type="password" id="admin-gemini-input" placeholder="AIzaSy...">
-            <button class="admin-save-btn gem" onclick="adminSaveKey('gemini')">Save Key</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Password Management -->
-      <div class="admin-section">
-        <div class="admin-section-header">
-          <div>
-            <div class="admin-section-title">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-              Password &amp; Security
-            </div>
-            <div class="admin-section-sub">Update login and admin passwords independently</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-          <div>
-            <div style="font-size:13px;font-weight:500;color:var(--sb-text);margin-bottom:12px;">Chat Login Password</div>
-            <div class="pw-form">
-              <div class="pw-field"><label>New Password</label><input class="admin-input" type="password" id="new-chat-pw" placeholder="Min 6 characters"></div>
-              <div class="pw-field"><label>Confirm</label><input class="admin-input" type="password" id="confirm-chat-pw" placeholder="Repeat password"></div>
-              <button class="pw-submit" onclick="updatePassword('chat')">Update Chat Password</button>
-            </div>
-          </div>
-          <div>
-            <div style="font-size:13px;font-weight:500;color:var(--sb-text);margin-bottom:12px;">Admin Dashboard Password</div>
-            <div class="pw-form">
-              <div class="pw-field"><label>New Password</label><input class="admin-input" type="password" id="new-admin-pw" placeholder="Min 6 characters"></div>
-              <div class="pw-field"><label>Confirm</label><input class="admin-input" type="password" id="confirm-admin-pw" placeholder="Repeat password"></div>
-              <button class="pw-submit" onclick="updatePassword('admin')">Update Admin Password</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Activity + Data -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
-        <div class="admin-section">
-          <div class="admin-section-header">
-            <div>
-              <div class="admin-section-title">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                Activity Log
-              </div>
-            </div>
-          </div>
-          <div id="activity-log" style="font-family:'Lato',monospace;font-size:11px;color:var(--sb-muted);text-align:center;padding:16px 0;">No activity yet</div>
-        </div>
-        <div class="admin-section">
-          <div class="admin-section-header">
-            <div>
-              <div class="admin-section-title">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-                Data Management
-              </div>
-              <div class="admin-section-sub">Export or clear stored data</div>
-            </div>
-          </div>
-          <div style="margin-bottom:14px;font-family:'Lato',monospace;font-size:11px;color:var(--sb-text);" id="storage-usage">Calculating…</div>
-          <div class="data-actions">
-            <button class="data-btn" onclick="exportChats()">
-              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-              Export Chats
-            </button>
-            <button class="data-btn destr" onclick="confirmAction('Clear All Conversations','This permanently deletes all chat history and cannot be undone.','Clear All',doClearChats)">
-              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>
-              Clear Chats
-            </button>
-            <button class="data-btn destr" onclick="confirmAction('Factory Reset','Deletes ALL data: conversations, API keys, passwords, logs. Cannot be undone.','Reset Everything',doFactoryReset)">
-              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9M3 3v6h6"/></svg>
-              Factory Reset
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- CHAT SCREEN -->
-<div class="screen" id="screen-chat">
-  <aside id="sidebar">
-    <div class="sidebar-header">
-      <div class="logo"><span style="color:var(--accent);display:flex;align-items:center;"><svg width="16" height="16" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="20,3 37,20 20,37 3,20" stroke="currentColor" stroke-width="2.0" fill="none" stroke-linejoin="round"/><polygon points="20,11 29,20 20,29 11,20" stroke="currentColor" stroke-width="0.9" fill="none" stroke-linejoin="round" opacity="0.45"/><line x1="20" y1="3" x2="20" y2="37" stroke="currentColor" stroke-width="0.6" opacity="0.2"/><line x1="3" y1="20" x2="37" y2="20" stroke="currentColor" stroke-width="0.6" opacity="0.2"/><circle cx="20" cy="3"  r="2.4" fill="currentColor"/><circle cx="37" cy="20" r="2.4" fill="currentColor"/><circle cx="20" cy="37" r="2.4" fill="currentColor"/><circle cx="3"  cy="20" r="2.4" fill="currentColor"/><circle cx="20" cy="20" r="3.2" fill="currentColor"/></svg></span>AEON</div>
-      <div style="display:flex;gap:3px;">
-        <button class="sib ab" onclick="gotoAdmin()" title="Admin Dashboard">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        </button>
-        <button class="sib" onclick="doLogout()" title="Sign Out">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        </button>
-      </div>
-    </div>
-    <button class="new-chat-btn" onclick="newChat()">
-      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-      New conversation
-    </button>
-    <div class="aeon-bg-logo"></div><div class="sidebar-section-label">Conversations</div>
-    <div class="chat-list" id="chat-list">
-      <div class="empty-state" id="empty-state">No conversations yet</div>
-    </div>
-    <div class="sidebar-footer">
-      <div class="provider-switcher">
-        <button class="provider-tab ac" id="tab-claude" onclick="switchProvider('claude')">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
-          Claude
-        </button>
-        <button class="provider-tab" id="tab-gemini" onclick="switchProvider('gemini')">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          Gemini
-        </button>
-      </div>
-      <div class="provider-key-panel visible" id="panel-claude">
-        <span class="api-key-label">Model</span>
-        <select class="model-select" id="claude-model-select">
-          <option value="claude-sonnet-4-20250514">claude-sonnet-4 (default)</option>
-          <option value="claude-opus-4-5">claude-opus-4.5</option>
-          <option value="claude-haiku-4-5-20251001">claude-haiku-4.5</option>
-        </select>
-        <div class="api-status">
-          <div class="api-status-dot" id="claude-api-dot"></div>
-          <span class="api-status-text" id="claude-api-status-text">Not configured</span>
-        </div>
-      </div>
-      <div class="provider-key-panel" id="panel-gemini">
-        <span class="api-key-label">Model</span>
-        <select class="model-select" id="gemini-model-select">
-          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-          <option value="gemini-2.5-pro-preview-06-05">Gemini 2.5 Pro</option>
-          <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-        </select>
-        <div class="api-status">
-          <div class="api-status-dot" id="gemini-api-dot"></div>
-          <span class="api-status-text" id="gemini-api-status-text">Not configured</span>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <main id="main">
-    <div class="aeon-bg-logo"></div><div id="topbar">
-      <div class="chat-title-display" id="topbar-title">Select or start a conversation</div>
-      <div class="topbar-actions">
-        <div class="model-badge" id="model-badge">
-          <div class="provider-dot claude" id="badge-dot"></div>
-          <span id="badge-label">claude-sonnet-4</span>
-        </div>
-        <button class="tb-icon-btn" onclick="gotoAdmin()" title="Admin">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
-        </button>
-      </div>
-    </div>
-    <div id="messages-container">
-      <div id="welcome">
-        <div class="welcome-mark">
-          <svg width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
-        </div>
-        <div class="welcome-h">Good to see you, Prashanth.</div>
-        <div class="welcome-sub">Your AI work assistant. Ask anything, upload documents for analysis, or pick a starter below.</div>
-        <div class="starter-grid">
-          <div class="starter-card" onclick="useStarter(this)"><div class="starter-card-label">Proposal</div><div class="starter-card-text">Help me draft a compelling executive summary for a bid</div></div>
-          <div class="starter-card" onclick="useStarter(this)"><div class="starter-card-label">Workshop</div><div class="starter-card-text">Design an agenda for a product leadership workshop</div></div>
-          <div class="starter-card" onclick="useStarter(this)"><div class="starter-card-label">Analysis</div><div class="starter-card-text">Summarise and extract key themes from this document</div></div>
-          <div class="starter-card" onclick="useStarter(this)"><div class="starter-card-label">Framework</div><div class="starter-card-text">Build a capability assessment framework for my team</div></div>
-        </div>
-      </div>
-      <div class="messages-inner" id="messages-inner"></div>
-    </div>
-    <div id="input-area">
-      <div class="input-inner">
-        <div id="staged-files"></div>
-        <div class="input-row">
-          <button class="toolbar-btn" onclick="document.getElementById('file-input').click()" title="Attach file">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
-          </button>
-          <div class="input-box-wrap">
-            <textarea id="chat-input" placeholder="Ask anything about your work…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-          </div>
-          <button class="send-btn" id="send-btn" onclick="sendMessage()">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-          </button>
-        </div>
-        <div class="input-hint">Enter to send · Shift+Enter for new line · Attach PDFs, images, text files</div>
-      </div>
-    </div>
-  </main>
-</div>
-
-<input type="file" id="file-input" multiple accept=".pdf,.txt,.md,.csv,.json,.png,.jpg,.jpeg,.webp,.gif" onchange="handleFiles(event)">
-<div id="toast"></div>
-<div id="confirm-modal">
-  <div class="confirm-card">
-    <div class="confirm-title" id="confirm-title">Are you sure?</div>
-    <div class="confirm-body" id="confirm-body">This cannot be undone.</div>
-    <div class="confirm-actions">
-      <button class="confirm-btn cancel" onclick="closeConfirm()">Cancel</button>
-      <button class="confirm-btn ok" id="confirm-ok">Confirm</button>
-    </div>
-  </div>
-</div>
-
-
 </body>
 </html>
